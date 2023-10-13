@@ -19,18 +19,22 @@ contract RelayPlugin is BasePluginWithEventMetadata {
     error InvalidRelayMethod(bytes4 data);
 
     address public immutable trustedOrigin;
-    bytes4 public immutable relayMethod;
 
     // Account => token => maxFee
     mapping(address => mapping(address => uint256)) public maxFeePerToken;
 
+    struct SafeGuard{
+        mapping(address => mapping(bytes4 => bool)) allowedCalls;
+    }
+
+    mapping(address => SafeGuard) safeGuard;
+
     constructor(
-        address _trustedOrigin,
-        bytes4 _relayMethod
+        address _trustedOrigin
     )
         BasePluginWithEventMetadata(
             PluginMetadata({
-                name: "Relay Plugin",
+                name: "Paymaster Plugin",
                 version: "1.0.0",
                 requiresRootAccess: false,
                 iconUrl: "",
@@ -39,7 +43,6 @@ contract RelayPlugin is BasePluginWithEventMetadata {
         )
     {
         trustedOrigin = _trustedOrigin;
-        relayMethod = _relayMethod;
     }
 
     function setMaxFeePerToken(address token, uint256 maxFee) external {
@@ -72,21 +75,32 @@ contract RelayPlugin is BasePluginWithEventMetadata {
         }
     }
 
-    function relayCall(address relayTarget, bytes calldata relayData) internal {
-        // Check relay data to avoid that module can be abused for arbitrary interactions
-        if (bytes4(relayData[:4]) != relayMethod) revert InvalidRelayMethod(bytes4(relayData[:4]));
+    function relayCall(
+        ISafeProtocolManager manager,
+        ISafe safe, 
+        SafeTransaction calldata safetx
+    ) internal {
+
+        bytes4 relayData = bytes4(safetx.actions[0].data[:4]);
+
+        if(safeGuard[address(safe)].allowedCalls[safetx.actions[0].to][relayData])revert InvalidRelayMethod(relayData);
 
         // Perform relay call and require success to avoid that user paid for failed transaction
-        (bool success, bytes memory data) = relayTarget.call(relayData);
-        if (!success) revert RelayExecutionFailure(data);
+        try manager.executeTransaction(safe, safetx) returns (bytes[] memory) {} catch (bytes memory reason) {
+            revert RelayExecutionFailure(reason);
+        }
     }
 
-    function executeFromPlugin(ISafeProtocolManager manager, ISafe safe, bytes calldata data) external {
+    function executeFromPlugin(
+        ISafeProtocolManager manager, 
+        ISafe safe,
+        SafeTransaction calldata safetx
+    ) external {
         if (trustedOrigin != address(0) && msg.sender != trustedOrigin) revert UntrustedOrigin(msg.sender);
 
-        relayCall(address(safe), data);
+        relayCall(manager, safe, safetx);
         // We use the hash of the tx to relay has a nonce as this is unique
-        uint256 nonce = uint256(keccak256(abi.encode(this, manager, safe, data)));
+        uint256 nonce = uint256(keccak256(abi.encode(this, manager, safe, safetx.actions[0].data)));
         payFee(manager, safe, nonce);
     }
 }
