@@ -156,6 +156,23 @@ export const relayTx = async (account: string, feeToken: string) => {
     return response.taskId;
   } catch (e) {
     console.error(e);
+    const tx = await getTransaction();
+    const plugin = await getRelayPlugin();
+    const manager = await getManager();
+    const request = {
+        chainId: SAMPLE_PLUGIN_CHAIN_ID,
+        target: await plugin.getAddress(),
+        data: (
+          await plugin.executeFromPlugin.populateTransaction(
+            await manager.getAddress(),
+            account,
+            tx
+          )
+        ).data,
+        feeToken,
+        isRelayContext: true,
+      };
+    console.log({ request });
     return "";
   }
 };
