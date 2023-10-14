@@ -3,7 +3,7 @@ import { formatUnits, parseUnits } from "ethers"
 import { useParams } from "react-router-dom";
 import "./Relay.css";
 import { CircularProgress, FormControl, InputLabel, Select, MenuItem, TextField, Button, Typography, Card } from '@mui/material';
-import { TokenInfo, getAvailableFeeToken, getMaxFeePerToken, getTokenInfo, isKnownSamplePlugin, updateMaxFeePerToken } from "../../../logic/sample";
+import { TokenInfo, getAvailableFeeToken, getMaxFeePerToken, getTokenInfo, isKnownSamplePlugin } from "../../../logic/sample";
 import { getSafeInfo, isConnectedToSafe } from "../../../logic/safeapp";
 import { SafeInfo } from '@safe-global/safe-apps-sdk';
 import { NextTxsList } from "./NextTxs";
