@@ -41,7 +41,7 @@ contract SafePaymasterPlugin is BasePluginWithEventMetadata {
                 version: "1.0.0",
                 requiresRootAccess: false,
                 iconUrl: "",
-                appUrl: "https://safe.paymaster.vercel.app"
+                appUrl: "https://nijoe1.github.io/Safe.Paymaster/#/relay/${plugin}"
             })
         )
     {

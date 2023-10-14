@@ -7,7 +7,6 @@ import { TokenInfo, getAvailableFeeToken, getMaxFeePerToken, getTokenInfo, isKno
 import { getSafeInfo, isConnectedToSafe } from "../../../logic/safeapp";
 import { SafeInfo } from '@safe-global/safe-apps-sdk';
 import { NextTxsList } from "./NextTxs";
-import { SafeMultisigTransaction } from "../../../logic/services";
 import { RelayDialog } from "./RelayDialog";
 
 export const RelayPlugin: FunctionComponent<{}> = () => {
@@ -16,7 +15,7 @@ export const RelayPlugin: FunctionComponent<{}> = () => {
     const [ txToRelay, setTxToRelay ] = useState<string|undefined>(undefined);
     const [ safeInfo, setSafeInfo ] = useState<SafeInfo|undefined>(undefined)
     const [ feeTokens, setFeeTokens ] = useState<string[]>([])
-    const [ maxFee, setMaxFee ] = useState<bigint | undefined>(undefined)
+    const [ relay, setRelay ] = useState<boolean | undefined>(false)
     const [ selectedFeeToken, setSelectedFeeToken ] = useState<string|undefined>(undefined)
     const [ selectedFeeTokenInfo, setSelectedFeeTokenInfo ] = useState<TokenInfo | undefined >(undefined)
     console.log({pluginAddress})
@@ -62,7 +61,7 @@ export const RelayPlugin: FunctionComponent<{}> = () => {
         fetchData();
     }, [selectedFeeToken])
 
-    const isLoading = safeInfo === undefined || selectedFeeTokenInfo === undefined
+    const isLoading = safeInfo === undefined
     
     return (
         <div className="Sample">
@@ -93,7 +92,9 @@ export const RelayPlugin: FunctionComponent<{}> = () => {
                 </>}    */}
                 </Card>
             {safeInfo && <NextTxsList safeInfo={safeInfo} handleRelay={() => setTxToRelay("")}/>}
-            <RelayDialog feeToken={selectedFeeToken} safeAddress={safeInfo?.safeAddress || ""}handleClose={() => setTxToRelay(undefined)} />
+            <Button onClick={() => setRelay(!relay)}>Relay</Button>
+
+            {relay && <RelayDialog feeToken={selectedFeeToken} safeAddress={safeInfo?.safeAddress || ""}handleClose={() => setTxToRelay(undefined)} />}
         </div>
     );
 };
