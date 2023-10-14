@@ -4,7 +4,7 @@ import { GelatoRelay } from "@gelatonetwork/relay-sdk";
 import { submitTxs } from "./safeapp";
 import { getManager } from "./protocol";
 import { getCurrentNonce } from "./safe";
-import pluginAbi from "./SafePaymasterPlugin.json"
+import pluginAbi from "./SafePaymasterPlugin.json";
 import {
   getSafeMultisigTxs,
   SafeMultisigTransaction,
@@ -45,11 +45,7 @@ export const isKnownSamplePlugin = (
 
 const getRelayPlugin = async () => {
   const provider = await getProvider();
-  return new ethers.Contract(
-    SAMPLE_PLUGIN_ADDRESS,
-    pluginAbi.abi,
-    provider
-  );
+  return new ethers.Contract(SAMPLE_PLUGIN_ADDRESS, pluginAbi.abi, provider);
 };
 
 const getTest = async () => {
@@ -125,8 +121,10 @@ export const getTransaction = async () => {
   const test = await getTest();
   const data1 = (await test.updateValue.populateTransaction(BigInt(10))).data;
 
+  let actions = [];
+  actions.push({ to: to, value: 0, data: data1 });
   return {
-    actions: [{ to: to, value: 0, data: data1 }],
+    actions: actions,
     nonce: 15,
     metadataHash:
       "0x0000000000000000000000000000000000000000000000000000000000000000",
