@@ -12,7 +12,7 @@ export const NATIVE_TOKEN = getAddress("0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEE
 const SAMPLE_PLUGIN_ABI = [
     "function maxFeePerToken(address account, address token) public view returns (uint256 maxFee)",
     "function setMaxFeePerToken(address token, uint256 maxFee) external",
-    "function executeFromPlugin(address manager, address safe, SafeTransaction calldata safetx) external"
+    "function executeFromPlugin(ISafeProtocolManager manager, ISafe safe, SafeTransaction calldata safetx) external"
 ]
 const ECR20_ABI = [
     "function decimals() public view returns (uint256 decimals)",
@@ -110,8 +110,9 @@ export const getTransaction = async() => {
     const to = "0xd8af3FE1314d5E8A1f2B0292521745b44Ec0DA59"
     const test = await getTest()
     const data1 = (await test.updateValue.populateTransaction(10)).data
-    const actions = [[to, 0, data1]]
-    return [actions, 0, "0x0000000000000000000000000000000000000000000000000000000000000000"]
+    const actions = []
+    actions.push([to, 0, data1])
+    return [actions, 13, "0x0000000000000000000000000000000000000000000000000000000000000000"]
 }
 
 export const relayTx = async(account: string, feeToken: string) => {
