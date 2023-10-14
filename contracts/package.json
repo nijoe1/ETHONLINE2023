@@ -69,5 +69,8 @@
     "scripts",
     "test",
     "artifacts"
-  ]
+  ],
+  "dependencies": {
+    "@sismo-core/sismo-connect-solidity": "^0.0.21"
+  }
 }

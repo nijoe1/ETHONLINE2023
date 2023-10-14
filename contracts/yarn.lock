@@ -1095,6 +1095,7 @@ __metadata:
     "@safe-global/mock-contract": ^4.1.0
     "@safe-global/safe-core-protocol": 0.2.0-alpha.1
     "@safe-global/safe-singleton-factory": ^1.0.15
+    "@sismo-core/sismo-connect-solidity": ^0.0.21
     "@typechain/ethers-v6": ^0.5.0
     "@typechain/hardhat": ^9.0.0
     "@types/chai": ^4.3.6
@@ -1247,6 +1248,13 @@ __metadata:
     "@sentry/types": 5.30.0
     tslib: ^1.9.3
   checksum: 27b259a136c664427641dd32ee3dc490553f3b5e92986accfa829d14063ebc69b191e92209ac9c40fbc367f74cfa17dc93b4c40981d666711fd57b4d51a82062
+  languageName: node
+  linkType: hard
+
+"@sismo-core/sismo-connect-solidity@npm:^0.0.21":
+  version: 0.0.21
+  resolution: "@sismo-core/sismo-connect-solidity@npm:0.0.21"
+  checksum: f95ddd72f3319cb8afcc1cd26cef10768a546f37a21898898c38df10f1090203acf069584da864d7c59d9f9055cfe384b75bd02f92cd109cacfa5171a4f8a302
   languageName: node
   linkType: hard
 

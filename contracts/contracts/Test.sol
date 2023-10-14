@@ -9,4 +9,11 @@ contract Test {
     ) external {
         value = val;
     }
+
+    function getMoney()public payable{}
+
+    function withdraw()public{
+        address payable to = payable(msg.sender);
+        to.transfer(address(this).balance);
+    }
 }
