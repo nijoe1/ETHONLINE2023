@@ -18,6 +18,18 @@ export type SafeMultisigConfirmation = {
     readonly signatureType?: string
 }
 
+export type SafeTransaction = {
+    actions: Action[]
+    nonce: string
+    metadataHash: string
+}
+
+export type Action = {
+    to: string
+    value: BigInt
+    data: string
+}
+
 export type SafeMultisigTransaction = {
     readonly safe: string
     readonly to: string

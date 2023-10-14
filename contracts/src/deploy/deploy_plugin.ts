@@ -21,6 +21,13 @@ const deploy: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
         deterministicDeployment: true,
     });
 
+    await deploy("Test", {
+        from: deployer,
+        args: [],
+        log: true,
+        deterministicDeployment: true,
+    });
+
 };
 
 deploy.tags = ["plugins"];

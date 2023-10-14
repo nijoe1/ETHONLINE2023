@@ -74,28 +74,8 @@ export const buildSignatureBytes = (signatures: SafeMultisigConfirmation[]): str
     return signatureBytes + dynamicBytes;
 };
 
-const getExecuteTxData = async (
-    safeTx: SafeMultisigTransaction
-): Promise<string> => {
-    const safe = await getSafe(safeTx.safe)
-    console.log(safeTx)
-    return (await safe.execTransaction.populateTransaction(
-        safeTx.to,
-        safeTx.value,
-        safeTx.data || "0x",
-        safeTx.operation,
-        safeTx.safeTxGas,
-        safeTx.baseGas,
-        safeTx.gasPrice,
-        safeTx.gasToken,
-        safeTx.refundReceiver || ZeroAddress,
-        buildSignatureBytes(safeTx.confirmations!!)
-    )).data;
-};
-
-export const buildExecuteTx = async (tx: SafeMultisigTransaction): Promise<{to: string, data: string}> => {
+export const buildExecuteTx = async (tx: SafeMultisigTransaction): Promise<{to: string}> => {
     return {
         to: getAddress(tx.safe),
-        data: await getExecuteTxData(tx)
     }
 }

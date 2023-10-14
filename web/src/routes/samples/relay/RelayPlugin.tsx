@@ -13,7 +13,7 @@ import { RelayDialog } from "./RelayDialog";
 export const RelayPlugin: FunctionComponent<{}> = () => {
     const { pluginAddress } = useParams();
     const [ newMaxFee, setNewMaxFee ] = useState<string>("");
-    const [ txToRelay, setTxToRelay ] = useState<SafeMultisigTransaction|undefined>(undefined);
+    const [ txToRelay, setTxToRelay ] = useState<string|undefined>(undefined);
     const [ safeInfo, setSafeInfo ] = useState<SafeInfo|undefined>(undefined)
     const [ feeTokens, setFeeTokens ] = useState<string[]>([])
     const [ maxFee, setMaxFee ] = useState<bigint | undefined>(undefined)
@@ -61,26 +61,8 @@ export const RelayPlugin: FunctionComponent<{}> = () => {
         }
         fetchData();
     }, [selectedFeeToken])
-    useEffect(() => {
-        setMaxFee(undefined)
-        if (safeInfo === undefined || selectedFeeToken === undefined) return
-        const fetchData = async() => {
-            try {
-                const maxFee = await getMaxFeePerToken(safeInfo.safeAddress, selectedFeeToken)
-                setMaxFee(maxFee)
-            } catch (e) {
-                console.error(e)
-            }
-        }
-        fetchData();
-    }, [selectedFeeToken, safeInfo])
-    const updateMaxFee = useCallback(async (feeTokenInfo: TokenInfo, maxFeeInput: string) => {
-        console.log("UPDATE")
-        const targetMaxFee = parseUnits(maxFeeInput, feeTokenInfo.decimals)
-        await updateMaxFeePerToken(feeTokenInfo.address, targetMaxFee)
-    }, [])
 
-    const isLoading = safeInfo === undefined || maxFee === undefined || selectedFeeTokenInfo === undefined
+    const isLoading = safeInfo === undefined || selectedFeeTokenInfo === undefined
     
     return (
         <div className="Sample">
@@ -101,17 +83,17 @@ export const RelayPlugin: FunctionComponent<{}> = () => {
                         </Select>
                     </FormControl>
                 </>}
-                {safeInfo !== undefined && maxFee !== undefined && selectedFeeTokenInfo !== undefined && <>
+                {/* {safeInfo !== undefined && maxFee !== undefined && selectedFeeTokenInfo !== undefined && <>
                     <p>Current max fee set: {formatUnits(maxFee, selectedFeeTokenInfo.decimals)} {selectedFeeTokenInfo.symbol}</p>
                     <Typography variant="body1">
                         New max fee ({selectedFeeTokenInfo.symbol}):<br />
                         <TextField id="standard-basic" label={`Max Fee (${selectedFeeTokenInfo.symbol})`} variant="standard" value={newMaxFee} onChange={(event) => setNewMaxFee(event.target.value)}/>
                     </Typography>
                     <Button onClick={() => updateMaxFee(selectedFeeTokenInfo, newMaxFee)}>Update</Button>
-                </>}   
+                </>}    */}
                 </Card>
-            {safeInfo && <NextTxsList safeInfo={safeInfo} handleRelay={(tx) => setTxToRelay(tx)}/>}
-            <RelayDialog tx={txToRelay} feeToken={selectedFeeToken} handleClose={() => setTxToRelay(undefined)} />
+            {safeInfo && <NextTxsList safeInfo={safeInfo} handleRelay={() => setTxToRelay("")}/>}
+            <RelayDialog feeToken={selectedFeeToken} safeAddress={safeInfo?.safeAddress || ""}handleClose={() => setTxToRelay(undefined)} />
         </div>
     );
 };

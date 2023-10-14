@@ -14,21 +14,20 @@ interface SafeOwners {
 }
 
 contract SafePaymasterPlugin is BasePluginWithEventMetadata {
-    event MaxFeeUpdated(address indexed account, address indexed feeToken, uint256 maxFee);
 
-    error FeeTooHigh(address feeToken, uint256 fee);
     error FeePaymentFailure(bytes data);
     error UntrustedOrigin(address origin);
     error RelayExecutionFailure(bytes data);
     error InvalidRelayMethod(bytes4 data);
+    error NotPaymasterOwner();
 
     address public immutable trustedOrigin;
 
-    // Account => token => maxFee
-    mapping(address => mapping(address => uint256)) public maxFeePerToken;
-
     struct SafeGuard{
+        // ContractAddress => method => allowedMethod
         mapping(address => mapping(bytes4 => bool)) allowedCalls;
+        // ContractAddress => method => allowedCallsByUser
+        mapping(address => mapping(bytes4 => uint256)) userAllowancePerMethod;
     }
 
     mapping(address => SafeGuard) safeGuard;
@@ -38,30 +37,39 @@ contract SafePaymasterPlugin is BasePluginWithEventMetadata {
     )
         BasePluginWithEventMetadata(
             PluginMetadata({
-                name: "Paymaster Plugin",
+                name: "Test Plugin",
                 version: "1.0.0",
                 requiresRootAccess: false,
                 iconUrl: "",
-                appUrl: "https://5afe.github.io/safe-core-protocol-demo/#/relay/${plugin}"
+                appUrl: "https://safe.paymaster.vercel.app"
             })
         )
     {
         trustedOrigin = _trustedOrigin;
     }
 
-    function setMaxFeePerToken(SafeOwners safe, address token, uint256 maxFee) external {
-        require(safe.isOwner(msg.sender));
-        maxFeePerToken[address(safe)][token] = maxFee;
-        emit MaxFeeUpdated(address(safe), token, maxFee);
+    function setAllowedInteractions(
+        address safeAddress,
+        address contractAddress,
+        bytes4 method    
+    )external{
+        if(!SafeOwners(safeAddress).isOwner(msg.sender)) revert NotPaymasterOwner();
+        safeGuard[safeAddress].allowedCalls[contractAddress][method] = true;
     }
+
+    // function setMaxFeePerToken(SafeOwners safe, address token, uint256 maxFee) external {
+    //     require(safe.isOwner(msg.sender));
+    //     maxFeePerToken[address(safe)][token] = maxFee;
+    //     emit MaxFeeUpdated(address(safe), token, maxFee);
+    // }
 
     function payFee(ISafeProtocolManager manager, ISafe safe, uint256 nonce) internal {
         address feeCollector = _getFeeCollectorRelayContext();
         address feeToken = _getFeeTokenRelayContext();
         uint256 fee = _getFeeRelayContext();
         SafeProtocolAction[] memory actions = new SafeProtocolAction[](1);
-        uint256 maxFee = maxFeePerToken[address(safe)][feeToken];
-        if (fee > maxFee) revert FeeTooHigh(feeToken, fee);
+        // uint256 maxFee = maxFeePerToken[address(safe)][feeToken];
+        // if (fee > maxFee) revert FeeTooHigh(feeToken, fee);
         if (feeToken == NATIVE_TOKEN || feeToken == address(0)) {
             // If the native token is used for fee payment, then we directly send the fees to the fee collector
             actions[0].to = payable(feeCollector);
@@ -86,13 +94,12 @@ contract SafePaymasterPlugin is BasePluginWithEventMetadata {
         SafeTransaction calldata safetx
     ) internal {
 
-        uint size = safetx.actions.length;
+        // uint size = safetx.actions.length;
 
-        for(uint i = 0; i < size; i++){
-            bytes4 relayData = bytes4(safetx.actions[0].data[:4]);
-
-            if(safeGuard[address(safe)].allowedCalls[safetx.actions[0].to][relayData])revert InvalidRelayMethod(relayData);
-        }
+        // for(uint i = 0; i < size; i++){
+        //     bytes4 relayData = bytes4(safetx.actions[0].data[:4]);
+        //     if(safeGuard[address(safe)].allowedCalls[safetx.actions[0].to][relayData])revert InvalidRelayMethod(relayData);
+        // }
 
         // Perform relay call and require success to avoid that user paid for failed transaction
         try manager.executeTransaction(safe, safetx) returns (bytes[] memory) {} catch (bytes memory reason) {

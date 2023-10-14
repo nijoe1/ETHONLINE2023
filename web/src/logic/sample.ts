@@ -4,7 +4,7 @@ import { GelatoRelay } from "@gelatonetwork/relay-sdk"
 import { submitTxs } from "./safeapp";
 import { getManager } from "./protocol";
 import { getCurrentNonce } from "./safe";
-import { getSafeMultisigTxs, SafeMultisigTransaction } from "./services";
+import { getSafeMultisigTxs, SafeMultisigTransaction, SafeTransaction } from "./services";
 
 const SAMPLE_PLUGIN_CHAIN_ID = 5
 const SAMPLE_PLUGIN_ADDRESS = getAddress("0x60D996eF6F281eD4f562537fab84CFE192FF0206")
@@ -12,11 +12,15 @@ export const NATIVE_TOKEN = getAddress("0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEE
 const SAMPLE_PLUGIN_ABI = [
     "function maxFeePerToken(address account, address token) public view returns (uint256 maxFee)",
     "function setMaxFeePerToken(address token, uint256 maxFee) external",
-    "function executeFromPlugin(address manager, address safe, bytes calldata data) external"
+    "function executeFromPlugin(address manager, address safe, SafeTransaction calldata safetx) external"
 ]
 const ECR20_ABI = [
     "function decimals() public view returns (uint256 decimals)",
     "function symbol() public view returns (string symbol)",
+]
+
+const TEST_ABI = [
+    "function updateValue(uint val) external"
 ]
 
 const gelato = new GelatoRelay()
@@ -36,6 +40,15 @@ const getRelayPlugin = async() => {
     return new ethers.Contract(
         SAMPLE_PLUGIN_ADDRESS,
         SAMPLE_PLUGIN_ABI,
+        provider
+    )
+}
+
+const getTest = async() => {
+    const provider = await getProvider()
+    return new ethers.Contract(
+        "0xd8af3FE1314d5E8A1f2B0292521745b44Ec0DA59",
+        TEST_ABI,
         provider
     )
 }
@@ -93,14 +106,24 @@ export const getTokenInfo = async(address: string): Promise<TokenInfo> => {
     } 
 }
 
-export const relayTx = async(account: string, data: string, feeToken: string) => {
+export const getTransaction = async() => {
+    const to = "0xd8af3FE1314d5E8A1f2B0292521745b44Ec0DA59"
+    const test = await getTest()
+    const data1 = (await test.updateValue.populateTransaction(10)).data
+    const actions = [[to, 0, data1]]
+    return [actions, 0, "0x0000000000000000000000000000000000000000000000000000000000000000"]
+}
+
+export const relayTx = async(account: string, feeToken: string) => {
     try {
+        const tx = await getTransaction()
         const plugin = await getRelayPlugin()
         const manager = await getManager()
+
         const request = {
             chainId: SAMPLE_PLUGIN_CHAIN_ID,
             target: await plugin.getAddress(),
-            data: (await plugin.executeFromPlugin.populateTransaction(await manager.getAddress(), account, data)).data,
+            data: (await plugin.executeFromPlugin.populateTransaction(await manager.getAddress(), account, tx)).data,
             feeToken,
             isRelayContext: true
         }
