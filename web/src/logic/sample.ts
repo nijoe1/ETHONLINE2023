@@ -12,7 +12,7 @@ import {
 
 const SAMPLE_PLUGIN_CHAIN_ID = 5;
 const SAMPLE_PLUGIN_ADDRESS = getAddress(
-  "0x59C6f5Ca28E14aA165A0f0145FB1a47011F44Cf9"
+  "0xaB312E5040aDdE20A1623f1CB36682268bbeC300"
 );
 export const NATIVE_TOKEN = getAddress(
   "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
