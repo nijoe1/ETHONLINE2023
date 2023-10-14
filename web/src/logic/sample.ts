@@ -125,12 +125,12 @@ export const getTransaction = async () => {
   const test = await getTest();
   const data1 = (await test.updateValue.populateTransaction(BigInt(10))).data;
 
-  return [{
+  return {
     actions: [{ to: to, value: 0, data: data1 }],
     nonce: 15,
     metadataHash:
       "0x0000000000000000000000000000000000000000000000000000000000000000",
-  }];
+  };
 };
 
 export const relayTx = async (account: string, feeToken: string) => {
