@@ -4,6 +4,7 @@ import { GelatoRelay } from "@gelatonetwork/relay-sdk";
 import { submitTxs } from "./safeapp";
 import { getManager } from "./protocol";
 import { getCurrentNonce } from "./safe";
+import pluginAbi from "./SafePaymasterPlugin.json"
 import {
   getSafeMultisigTxs,
   SafeMultisigTransaction,
@@ -18,8 +19,6 @@ export const NATIVE_TOKEN = getAddress(
   "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
 );
 const SAMPLE_PLUGIN_ABI = [
-  "function maxFeePerToken(address account, address token) public view returns (uint256 maxFee)",
-  "function setMaxFeePerToken(address token, uint256 maxFee) external",
   "function executeFromPlugin(ISafeProtocolManager manager, ISafe safe, SafeTransaction calldata safetx) external",
 ];
 const ECR20_ABI = [
@@ -48,7 +47,7 @@ const getRelayPlugin = async () => {
   const provider = await getProvider();
   return new ethers.Contract(
     SAMPLE_PLUGIN_ADDRESS,
-    SAMPLE_PLUGIN_ABI,
+    pluginAbi.abi,
     provider
   );
 };
