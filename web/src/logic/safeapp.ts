@@ -50,7 +50,7 @@ export const openSafeApp = async(appUrl: string) => {
         window.open(
             // `${origin}/apps/open?safe=${networkPrefix}:${safe.safeAddress}&appUrl=${encodeURIComponent(appUrl)}`,
             // '_blank',
-            `${origin}/apps/open?safe=${networkPrefix}:${safe.safeAddress}&appUrl=${encodeURIComponent("https://nijoe1.github.io/Safe.Paymaster/#/relay/${plugin}")}`,
+            `${origin}/apps/open?safe=${networkPrefix}:${safe.safeAddress}&appUrl=${encodeURIComponent(appUrl)}`,
             '_blank',
         )
     }
