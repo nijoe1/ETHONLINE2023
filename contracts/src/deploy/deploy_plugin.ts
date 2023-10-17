@@ -10,7 +10,8 @@ const deploy: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
     // execTransaction(address,uint256,bytes,uint8,uint256,uint256,uint256,address,address,bytes)
     // https://www.4byte.directory/signatures/?bytes4_signature=0x6a761202
-    const relayMethod = "0x6a761202"
+
+    const sismoAppID = "0x2d31f5ac41cdeba21728cca8842ff2f7"
     // We don't use a trusted origin right now to make it easier to test.
     // For production networks it is strongly recommended to set one to avoid potential fee extraction.
     const trustedOrigin = ZeroAddress // hre.network.name === "hardhat" ? ZeroAddress : getGelatoAddress(hre.network.name)
