@@ -1,7 +1,7 @@
-import { ethers, getAddress, ZeroAddress } from "ethers";
+import { BigNumberish, BytesLike, ethers, getAddress, ZeroAddress } from "ethers";
 import { getProvider } from "./web3";
-import { GelatoRelay } from "@gelatonetwork/relay-sdk";
-import { submitTxs } from "./safeapp";
+import { CallWithSyncFeeERC2771Request, GelatoRelay } from "@gelatonetwork/relay-sdk";
+import { getSafeAppsProvider, submitTxs } from "./safeapp";
 import { getManager } from "./protocol";
 import { getCurrentNonce } from "./safe";
 import pluginAbi from "./SafePaymasterPlugin.json";
@@ -10,6 +10,18 @@ import {
   SafeMultisigTransaction,
   SafeTransaction,
 } from "./services";
+
+type SequentialERC2771Request = {
+  chainId: BigNumberish;
+  target: string;
+  data: BytesLike;
+  user: string;
+  userDeadline?: BigNumberish;
+  feeToken: string;
+  isRelayContext?: boolean;
+  isConcurrent?: false;
+  userNonce?: BigNumberish;
+};
 
 const SAMPLE_PLUGIN_CHAIN_ID = 5;
 const SAMPLE_PLUGIN_ADDRESS = getAddress(
@@ -137,8 +149,8 @@ export const relayTx = async (account: string, feeToken: string) => {
     const plugin = await getRelayPlugin();
     const manager = await getManager();
 
-    const request = {
-      chainId: SAMPLE_PLUGIN_CHAIN_ID,
+    const request:CallWithSyncFeeERC2771Request = {
+      chainId: BigInt(SAMPLE_PLUGIN_CHAIN_ID),
       target: await plugin.getAddress(),
       data: (
         await plugin.executeFromPlugin.populateTransaction(
@@ -147,32 +159,18 @@ export const relayTx = async (account: string, feeToken: string) => {
           tx
         )
       ).data,
+      user:"user",
       feeToken,
       isRelayContext: true,
     };
+    let provider = await getSafeAppsProvider()
+
     console.log({ request });
-    const response = await gelato.callWithSyncFee(request);
+    const response = await gelato.callWithSyncFeeERC2771(request,provider);
     console.log(response);
     return response.taskId;
   } catch (e) {
     console.error(e);
-    const tx = await getTransaction();
-    const plugin = await getRelayPlugin();
-    const manager = await getManager();
-    const request = {
-        chainId: SAMPLE_PLUGIN_CHAIN_ID,
-        target: await plugin.getAddress(),
-        data: (
-          await plugin.executeFromPlugin.populateTransaction(
-            await manager.getAddress(),
-            account,
-            tx
-          )
-        ).data,
-        feeToken,
-        isRelayContext: true,
-      };
-    console.log({ request });
     return "";
   }
 };

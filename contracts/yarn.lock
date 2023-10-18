@@ -545,12 +545,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gelatonetwork/relay-context@npm:^2.1.0":
-  version: 2.1.0
-  resolution: "@gelatonetwork/relay-context@npm:2.1.0"
+"@gelatonetwork/relay-context@npm:^3.2.0":
+  version: 3.2.0
+  resolution: "@gelatonetwork/relay-context@npm:3.2.0"
   dependencies:
-    "@openzeppelin/contracts": 4.8.0
-  checksum: c45b40ec04e4cfea25dc1567dfce5c6f9d5fd43a8300a387f5624b78cffb2ccea710345ce8e80dbd7c4bd5203b82e8437dbd52964ca5d5fc8f2044d143967db8
+    "@openzeppelin/contracts": 4.9.3
+  checksum: 63d456a7346f3780c14f97c76ef0b991cf707de741a5e407aa43d1a286a768d99b0b94bc1ae2378da094391b18a04f6cb17d8f327406d8571ca14287d9f9eef0
   languageName: node
   linkType: hard
 
@@ -1039,14 +1039,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@openzeppelin/contracts@npm:4.8.0":
-  version: 4.8.0
-  resolution: "@openzeppelin/contracts@npm:4.8.0"
-  checksum: dfab51a7f91735cfb1e94dd5074736b0dac0207e4ebf26eb46b32defd3b67adce5a36b248daa7b841c21be74863c1e37cf92ed194a9c36d3f8c5326d1a24242a
-  languageName: node
-  linkType: hard
-
-"@openzeppelin/contracts@npm:^4.9.3":
+"@openzeppelin/contracts@npm:4.9.3, @openzeppelin/contracts@npm:^4.9.3":
   version: 4.9.3
   resolution: "@openzeppelin/contracts@npm:4.9.3"
   checksum: 4932063e733b35fa7669b9fe2053f69b062366c5c208b0c6cfa1ac451712100c78acff98120c3a4b88d94154c802be05d160d71f37e7d74cadbe150964458838
@@ -1085,7 +1078,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@safe-global/safe-core-protocol-demo@workspace:."
   dependencies:
-    "@gelatonetwork/relay-context": ^2.1.0
+    "@gelatonetwork/relay-context": ^3.2.0
     "@nomicfoundation/hardhat-chai-matchers": ^2.0.2
     "@nomicfoundation/hardhat-ethers": ^3.0.4
     "@nomicfoundation/hardhat-network-helpers": ^1.0.9
@@ -1096,6 +1089,7 @@ __metadata:
     "@safe-global/safe-core-protocol": 0.2.0-alpha.1
     "@safe-global/safe-singleton-factory": ^1.0.15
     "@sismo-core/sismo-connect-solidity": ^0.0.21
+    "@tableland/evm": 4.2.1
     "@typechain/ethers-v6": ^0.5.0
     "@typechain/hardhat": ^9.0.0
     "@types/chai": ^4.3.6
@@ -1273,6 +1267,13 @@ __metadata:
   dependencies:
     antlr4ts: ^0.5.0-alpha.4
   checksum: 6ccbdab334331a58fde2a739cff76d5a99d836186b7899e8e027266f2af2a4bddc77c9c2abd01307cea6c470345d48edc470049e9672143b73f4aff3c8976183
+  languageName: node
+  linkType: hard
+
+"@tableland/evm@npm:4.2.1":
+  version: 4.2.1
+  resolution: "@tableland/evm@npm:4.2.1"
+  checksum: 84b8f26a9c559d216d8d44896535f2d99d5e3a4ff5621b7f33ad76bcf446d5a8885052819131fc3ad4a69bf8201029d8608748faf83863efde1354f492730e9c
   languageName: node
   linkType: hard
 

@@ -24,7 +24,6 @@
     "prepack": "yarn build"
   },
   "devDependencies": {
-    "@gelatonetwork/relay-context": "^2.1.0",
     "@nomicfoundation/hardhat-chai-matchers": "^2.0.2",
     "@nomicfoundation/hardhat-ethers": "^3.0.4",
     "@nomicfoundation/hardhat-network-helpers": "^1.0.9",
@@ -71,6 +70,8 @@
     "artifacts"
   ],
   "dependencies": {
-    "@sismo-core/sismo-connect-solidity": "^0.0.21"
+    "@gelatonetwork/relay-context": "^3.2.0",
+    "@sismo-core/sismo-connect-solidity": "^0.0.21",
+    "@tableland/evm": "4.2.1"
   }
 }
