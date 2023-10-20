@@ -1,4 +1,10 @@
-import { BigNumberish, BytesLike, ethers, getAddress, ZeroAddress } from "ethers";
+import {
+  BigNumberish,
+  BytesLike,
+  ethers,
+  getAddress,
+  ZeroAddress,
+} from "ethers";
 import { getProvider } from "./web3";
 import { getSafeAppsProvider, submitTxs } from "./safeapp";
 import { getManager } from "./protocol";
@@ -57,7 +63,6 @@ const getTest = async () => {
   );
 };
 
-
 const getToken = async (address: string) => {
   const provider = await getProvider();
   return new ethers.Contract(address, ECR20_ABI, provider);
@@ -88,23 +93,25 @@ export const setAllowedInteractions = async (
   ClaimRequests: ClaimRequest[],
   allowedTimesPerUser: number,
   metadataCID: string
-)=> {
+) => {
   try {
     const plugin = await getRelayPlugin();
+    let dt = (
+      await plugin.setAllowedInteractions(
+        safeAddress,
+        contractAddress,
+        methods,
+        ClaimRequests,
+        allowedTimesPerUser,
+        metadataCID
+      )
+    ).data;
+    console.log(dt)
     await submitTxs([
       {
         to: pluginAbi.address,
         value: "0",
-        data: (
-          await plugin.setAllowedInteractions(
-            safeAddress,
-            contractAddress,
-            methods,
-            ClaimRequests,
-            allowedTimesPerUser,
-            metadataCID
-          )
-        ).data,
+        data: dt,
       },
     ]);
   } catch (e) {
