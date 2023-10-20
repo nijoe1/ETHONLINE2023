@@ -41,11 +41,11 @@ export const isKnownSamplePlugin = (
   address: string
 ): boolean =>
   ethers.toBigInt(chainId) == ethers.toBigInt(SAMPLE_PLUGIN_CHAIN_ID) &&
-  getAddress(address) === SAMPLE_PLUGIN_ADDRESS;
+  getAddress(address) === pluginAbi.address;
 
 const getRelayPlugin = async () => {
   const provider = await getProvider();
-  return new ethers.Contract(SAMPLE_PLUGIN_ADDRESS, pluginAbi.abi, provider);
+  return new ethers.Contract(pluginAbi.address, pluginAbi.abi, provider);
 };
 
 const getTest = async () => {
