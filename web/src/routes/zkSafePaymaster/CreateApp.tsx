@@ -82,6 +82,7 @@ export default function CreateApp() {
         }
       }
     }
+    console.log(sismoGroups, " :  ",formData)
     await setAllowedInteractions(
       info.safeAddress,
       formData.address,
