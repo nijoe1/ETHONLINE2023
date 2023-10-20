@@ -61,6 +61,8 @@ export default function CreateApp() {
   }, [pluginAddress]);
 
   const setAllowedInteractionsCalls = useCallback(async () => {
+    const info = await getSafeInfo();
+
     const sismoGroups = [];
     if (groups != undefined) {
       for (let i = 0; i < groups.length; i++) {
@@ -78,8 +80,7 @@ export default function CreateApp() {
       }
     }
     await setAllowedInteractions(
-      // @ts-ignore
-      safeInfo.safeAddress,
+      info.safeAddress,
       formData.address,
       formData.methods,
       sismoGroups as ClaimRequest[],
