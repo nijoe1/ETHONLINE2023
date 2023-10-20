@@ -2,7 +2,11 @@ import React, { useState, useEffect, FormEvent, useCallback } from "react";
 
 import { parseAbiToFunction } from "../../lib/abiParse";
 import SponsorRequirements from "./sismo/SponsorRequirements";
-import { ClaimRequest, ClaimType } from "@sismo-core/sismo-connect-react";
+import {
+  ClaimRequest,
+  ClaimType,
+  RequestBuilder,
+} from "@sismo-core/sismo-connect-react";
 import { SafeInfo } from "@safe-global/safe-apps-sdk";
 
 import "./Plugins.css";
@@ -10,7 +14,7 @@ import logo from "../../logo.svg";
 import FunctionSelector from "./components/FunctionSelector";
 import Details from "./components/Details";
 import Steps from "./components/Steps";
-import { Interface, parseUnits } from "ethers";
+import { Interface, parseUnits, isBytesLike } from "ethers";
 import { getSafeInfo, isConnectedToSafe } from "../../logic/safeapp";
 import {
   isKnownSamplePlugin,
@@ -62,20 +66,19 @@ export default function CreateApp() {
 
   const setAllowedInteractionsCalls = useCallback(async () => {
     const info = await getSafeInfo();
-
+    console.log(info)
     const sismoGroups = [];
     if (groups != undefined) {
       for (let i = 0; i < groups.length; i++) {
         if (groups[i] != undefined) {
-          sismoGroups.push([
-            ClaimType.GTE,
-            groups[i].id,
-            "0x6c61746573740000000000000000000",
-            1,
-            false,
-            true,
-            "0x00",
-          ]);
+          sismoGroups.push({
+            claimType: ClaimType.GTE,
+            groupId: groups[i].id,
+            groupTimestamp: "0x6c61746573740000000000000000000",
+            isOptional: false,
+            isSelecterdByUser: true,
+            extraData: "0x00",
+          });
         }
       }
     }
@@ -85,7 +88,7 @@ export default function CreateApp() {
       formData.methods,
       sismoGroups as ClaimRequest[],
       1,
-      ""
+      " "
     );
   }, []);
 
@@ -130,7 +133,7 @@ export default function CreateApp() {
       .map((selected, index) => (selected ? index : -1))
       .filter((index) => index !== -1);
     setSelectedFunctionIndexes(selectedIndexes);
-    
+
     let methodIDs: any[] = [];
     let Functions: any[] = [];
     for (const item of selectedIndexes) {
