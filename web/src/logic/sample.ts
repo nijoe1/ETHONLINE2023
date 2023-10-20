@@ -1,6 +1,5 @@
 import { BigNumberish, BytesLike, ethers, getAddress, ZeroAddress } from "ethers";
 import { getProvider } from "./web3";
-import { CallWithSyncFeeERC2771Request, GelatoRelay } from "@gelatonetwork/relay-sdk";
 import { getSafeAppsProvider, submitTxs } from "./safeapp";
 import { getManager } from "./protocol";
 import { getCurrentNonce } from "./safe";
@@ -10,18 +9,7 @@ import {
   SafeMultisigTransaction,
   SafeTransaction,
 } from "./services";
-
-type SequentialERC2771Request = {
-  chainId: BigNumberish;
-  target: string;
-  data: BytesLike;
-  user: string;
-  userDeadline?: BigNumberish;
-  feeToken: string;
-  isRelayContext?: boolean;
-  isConcurrent?: false;
-  userNonce?: BigNumberish;
-};
+import { ClaimRequest } from "@sismo-core/sismo-connect-react";
 
 const SAMPLE_PLUGIN_CHAIN_ID = 5;
 const SAMPLE_PLUGIN_ADDRESS = getAddress(
@@ -31,7 +19,9 @@ export const NATIVE_TOKEN = getAddress(
   "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
 );
 const SAMPLE_PLUGIN_ABI = [
-  "function executeFromPlugin(ISafeProtocolManager manager, ISafe safe, SafeTransaction calldata safetx) external",
+  "function setAllowedInteractions( address safeAddress, address contractAddress, bytes4[] calldata  methods, ClaimRequest[] calldata _claims, uint256 _timesPerAddress, string memory guardMetadataCID) external",
+  "function deleteAllowedInteractions(address safeAddress,address contractAddress,bytes4[] calldata  methods,string memory guardMetadataCID) external",
+  "function executeFromPlugin(address manager, address safe, SafeTransaction calldata safetx) external",
 ];
 const ECR20_ABI = [
   "function decimals() public view returns (uint256 decimals)",
@@ -39,8 +29,6 @@ const ECR20_ABI = [
 ];
 
 const TEST_ABI = ["function updateValue(uint val) external"];
-
-const gelato = new GelatoRelay();
 
 export interface TokenInfo {
   address: string;
@@ -69,6 +57,7 @@ const getTest = async () => {
   );
 };
 
+
 const getToken = async (address: string) => {
   const provider = await getProvider();
   return new ethers.Contract(address, ECR20_ABI, provider);
@@ -84,16 +73,43 @@ export const getNextTxs = async (
   return txs;
 };
 
-export const getAvailableFeeToken = async (): Promise<string[]> => {
-  return await gelato.getPaymentTokens(SAMPLE_PLUGIN_CHAIN_ID);
-};
-
 export const getMaxFeePerToken = async (
   account: string,
   token: string
 ): Promise<bigint> => {
   const plugin = await getRelayPlugin();
   return await plugin.maxFeePerToken(account, token);
+};
+
+export const setAllowedInteractions = async (
+  safeAddress: string,
+  contractAddress: string,
+  methods: string[],
+  ClaimRequests: ClaimRequest[],
+  allowedTimesPerUser: number,
+  metadataCID: string
+)=> {
+  try {
+    const plugin = await getRelayPlugin();
+    await submitTxs([
+      {
+        to: await plugin.getAddress(),
+        value: "0",
+        data: (
+          await plugin.setAllowedInteractions(
+            safeAddress,
+            contractAddress,
+            methods,
+            ClaimRequests,
+            allowedTimesPerUser,
+            metadataCID
+          )
+        ).data,
+      },
+    ]);
+  } catch (e) {
+    console.error(e);
+  }
 };
 
 export const updateMaxFeePerToken = async (token: string, maxFee: bigint) => {
@@ -141,45 +157,4 @@ export const getTransaction = async () => {
     metadataHash:
       "0x0000000000000000000000000000000000000000000000000000000000000000",
   };
-};
-
-export const relayTx = async (account: string, feeToken: string) => {
-  try {
-    const tx = await getTransaction();
-    const plugin = await getRelayPlugin();
-    const manager = await getManager();
-
-    const request:CallWithSyncFeeERC2771Request = {
-      chainId: BigInt(SAMPLE_PLUGIN_CHAIN_ID),
-      target: await plugin.getAddress(),
-      data: (
-        await plugin.executeFromPlugin.populateTransaction(
-          await manager.getAddress(),
-          account,
-          tx
-        )
-      ).data,
-      user:"user",
-      feeToken,
-      isRelayContext: true,
-    };
-    let provider = await getSafeAppsProvider()
-
-    console.log({ request });
-    const response = await gelato.callWithSyncFeeERC2771(request,provider);
-    console.log(response);
-    return response.taskId;
-  } catch (e) {
-    console.error(e);
-    return "";
-  }
-};
-
-export const getStatus = async (taskId: string) => {
-  try {
-    return await gelato.getTaskStatus(taskId);
-  } catch (e) {
-    console.error(e);
-    return undefined;
-  }
 };
