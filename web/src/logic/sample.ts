@@ -96,17 +96,22 @@ export const setAllowedInteractions = async (
 ) => {
   try {
     const plugin = await getRelayPlugin();
-    let dt = (
-      await plugin.setAllowedInteractions(
-        safeAddress,
-        contractAddress,
-        methods,
-        ClaimRequests,
-        allowedTimesPerUser,
-        metadataCID
-      )
-    ).data;
-    console.log(dt)
+    let dt;
+    try {
+      dt = (
+        await plugin.setAllowedInteractions(
+          safeAddress,
+          contractAddress,
+          methods,
+          ClaimRequests,
+          allowedTimesPerUser,
+          metadataCID
+        )
+      ).data;
+      console.log(dt);
+    } catch (e) {
+      console.log(e);
+    }
     await submitTxs([
       {
         to: pluginAbi.address,

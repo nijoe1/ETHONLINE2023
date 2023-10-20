@@ -72,7 +72,7 @@ export default function CreateApp() {
       for (let i = 0; i < groups.length; i++) {
         if (groups[i] != undefined) {
           sismoGroups.push({
-            claimType: ClaimType.GTE,
+            claimType: 0,
             groupId: groups[i].id,
             groupTimestamp: "0x6c61746573740000000000000000000",
             isOptional: false,
