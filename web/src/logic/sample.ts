@@ -13,13 +13,13 @@ import { ClaimRequest } from "@sismo-core/sismo-connect-react";
 
 const SAMPLE_PLUGIN_CHAIN_ID = 5;
 const SAMPLE_PLUGIN_ADDRESS = getAddress(
-  "0xaB312E5040aDdE20A1623f1CB36682268bbeC300"
+  "0xF0Bb62526157a094Db0e8EdEbb61483e51100DfC"
 );
 export const NATIVE_TOKEN = getAddress(
   "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
 );
 const SAMPLE_PLUGIN_ABI = [
-  "function setAllowedInteractions( address safeAddress, address contractAddress, bytes4[] calldata  methods, ClaimRequest[] calldata _claims, uint256 _timesPerAddress, string memory guardMetadataCID) external",
+  "function setAllowedInteractions(address safeAddress, address contractAddress, bytes4[] calldata  methods, ClaimRequest[] calldata _claims, uint256 _timesPerAddress, string memory guardMetadataCID) external",
   "function deleteAllowedInteractions(address safeAddress,address contractAddress,bytes4[] calldata  methods,string memory guardMetadataCID) external",
   "function executeFromPlugin(address manager, address safe, SafeTransaction calldata safetx) external",
 ];
@@ -100,7 +100,7 @@ export const setAllowedInteractions = async (
             safeAddress,
             contractAddress,
             methods,
-            ClaimRequests,
+            [],
             allowedTimesPerUser,
             metadataCID
           )

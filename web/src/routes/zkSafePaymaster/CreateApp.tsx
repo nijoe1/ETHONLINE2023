@@ -78,7 +78,8 @@ export default function CreateApp() {
       }
     }
     await setAllowedInteractions(
-      safeInfo?.safeAddress || "",
+      // @ts-ignore
+      safeInfo.safeAddress,
       formData.address,
       formData.methods,
       sismoGroups as ClaimRequest[],
