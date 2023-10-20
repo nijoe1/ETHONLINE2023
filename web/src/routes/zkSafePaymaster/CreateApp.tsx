@@ -87,7 +87,7 @@ export default function CreateApp() {
       info.safeAddress,
       formData.address,
       formData.methods,
-      sismoGroups as ClaimRequest[],
+      sismoGroups,
       1,
       " "
     );

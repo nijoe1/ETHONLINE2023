@@ -90,7 +90,7 @@ export const setAllowedInteractions = async (
   safeAddress: string,
   contractAddress: string,
   methods: string[],
-  ClaimRequests: ClaimRequest[],
+  ClaimRequests: any[],
   allowedTimesPerUser: number,
   metadataCID: string
 ) => {
