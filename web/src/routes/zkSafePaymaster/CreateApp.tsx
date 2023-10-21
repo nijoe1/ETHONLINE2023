@@ -68,28 +68,38 @@ export default function CreateApp() {
     const info = await getSafeInfo();
     console.log(info)
     const sismoGroups = [];
-    if (groups != undefined) {
-      for (let i = 0; i < groups.length; i++) {
-        if (groups[i] != undefined) {
-          sismoGroups.push({
-            claimType: 0,
-            groupId: groups[i].id,
-            groupTimestamp: "0x6c61746573740000000000000000000",
-            isOptional: false,
-            isSelecterdByUser: true,
-            extraData: "0x00",
-          });
-        }
-      }
-    }
+    // if (groups != undefined) {
+    //   for (let i = 0; i < groups.length; i++) {
+    //     if (groups[i] != undefined) {
+    //       sismoGroups.push({
+    //         claimType: 0,
+    //         groupId: groups[i].id,
+    //         groupTimestamp: "0x6c61746573740000000000000000000",
+    //         isOptional: false,
+    //         isSelecterdByUser: true,
+    //         extraData: "0x00",
+    //       });
+    //     }
+    //   }
+    // }
+    sismoGroups.push({
+      claimType: 0,
+      groupId: "0x3a49d2e9734722a24b127b610f894639",
+      groupTimestamp: "0x6c61746573740000000000000000000",
+      isOptional: false,
+      isSelecterdByUser: true,
+      extraData: "0x00",
+    });
+    let methods = []
+    methods.push('0x573c0bd3')
     console.log(sismoGroups, " :  ",formData)
     await setAllowedInteractions(
       info.safeAddress,
-      formData.address,
-      formData.methods,
+      "0xd8af3FE1314d5E8A1f2B0292521745b44Ec0DA59",
+      methods,
       sismoGroups,
       1,
-      " "
+      " khgkhghg"
     );
   }, []);
 
