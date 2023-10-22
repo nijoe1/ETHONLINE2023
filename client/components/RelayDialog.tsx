@@ -37,9 +37,9 @@ const dialogContent = (status: Status) => {
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-const isErrorTaskState = (state: string): boolean => {
+const isErrorTaskState = (state: string|undefined): boolean => {
   return ["ExecReverted", "Blacklisted", "Cancelled", "NotFound"].includes(
-    state
+    state || ""
   );
 };
 
@@ -81,11 +81,11 @@ export const RelayDialog: FunctionComponent<{
           while (retries < 60) {
             const relayStatus = await getStatus(txId);
             console.log({ relayStatus });
-            if (retries > 3 && isErrorTaskState(relayStatus.taskState)) {
-              setStatus(Status.Ready);
+            if (retries > 3 && isErrorTaskState(relayStatus?.taskState || undefined)) {
+              setStatus(Status?.Ready);
               return;
-            } else if (relayStatus.taskState === "ExecSuccess") {
-              setStatus(Status.Ready);
+            } else if (relayStatus?.taskState === "ExecSuccess") {
+              setStatus(Status?.Ready);
               return;
             } else {
               retries++;
