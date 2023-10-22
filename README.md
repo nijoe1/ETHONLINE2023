@@ -6,7 +6,7 @@
 
 ### ETHONLINE 2023
 
-- [ETHGLOBAL-Link](https://ethglobal.com/showcase/zkemail-safe-z8dps)
+- [ETHGLOBAL-Link](https://ethglobal.com/showcase/zksafepaymaster-xhuff)
 - [Plugin-Link](https://nijoe1.github.io/Safe.Paymaster/)
 - [Dashboard-Link](https://safe-paymaster.vercel.app/)
 
