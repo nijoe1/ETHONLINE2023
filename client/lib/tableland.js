@@ -14,12 +14,20 @@ export const getPaymasters = async (chainId) => {
 
   try {
     const result = await axios.get(getAllSchemasQuery);
+    console.log(result)
     return result.data;
   } catch (err) {
     console.error(err);
     return null;
   }
 };
+
+export const getData = async(cid)=>{
+  const query = "https://nftstorage.link/ipfs/"+cid
+  const result = await axios.get(query);
+  console.log(result.data)
+  return result.data;
+}
 
 export const getPaymaster = async (chainId, address) => {
   const getAllSchemasQuery =

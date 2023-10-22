@@ -6,21 +6,20 @@ import CreateApp from "../zkSafePaymaster/CreateApp";
 
 import "./Home.css";
 
+
+
+import './Home.css';
+
 function Home() {
   return (
     <div className="App">
-      <Routes>
-        <Route path="/plugins" element={<PluginList />} />
-        <Route path="/zkSafePaymaster" element={<CreateApp />} />
-      </Routes>
-      <div>
-        <Link to="/plugins">
-          <button>Go to Plugins</button>
-        </Link>
-        <Link to="/zkSafePaymaster">
-          <button>Go to Config</button>
-        </Link>
-      </div>
+      <header className="App-header">
+        <img src={logo} className="App-logo" alt="logo" />
+        <p>
+          Safe&#123;Core&#125; ZKSafePaymaster Plugin
+        </p>
+        <Link to="/zkSafePaymaster">Go to configure you ZKSafePaymaster</Link>
+      </header>
     </div>
   );
 }

@@ -3,23 +3,19 @@ import { Input, Textarea } from "@material-tailwind/react";
 
 interface DetailsProps {
   formData: any;
-  updateName: (value: string) => void;
-  updateDescription: (value: string) => void;
-  updateAddress: (value: string) => void;
-  updateAbi: (value: string) => void;
-  textInputStyle: React.CSSProperties;
+  updateInputValue: (name: string, value: string) => void;
 }
 
-const Details: React.FC<DetailsProps> = ({
-  formData,
-  updateName,
-  updateDescription,
-  updateAddress,
-  updateAbi,
-  textInputStyle,
-}) => {
-  const [update, setUpdate] = useState(true);
-  useEffect(() => {}, [update]);
+const Details: React.FC<DetailsProps> = ({ formData, updateInputValue }) => {
+  const textInputStyle = {
+    border: "1px solid gray", // Gray border for text inputs
+    padding: "5px",
+    marginBottom: "10px",
+  };
+  useEffect(() => {
+    // Log to verify the formData and updates
+    console.log("formData in Details: ", formData);
+  }, [formData]);
   return (
     <div>
       <label htmlFor="name" style={{ marginTop: "10px", fontSize: "18px" }}>
@@ -32,8 +28,7 @@ const Details: React.FC<DetailsProps> = ({
         value={formData.name}
         style={textInputStyle}
         onChange={(e) => {
-          setUpdate(!update);
-          updateName(e.target.value);
+          updateInputValue("name", e.target.value);
         }}
       />
 
@@ -50,8 +45,7 @@ const Details: React.FC<DetailsProps> = ({
         value={formData.description}
         style={textInputStyle}
         onChange={(e) => {
-          setUpdate(!update);
-          updateDescription(e.target.value);
+          updateInputValue("description", e.target.value);
         }}
       />
 
@@ -65,8 +59,7 @@ const Details: React.FC<DetailsProps> = ({
         value={formData.address}
         style={textInputStyle}
         onChange={(e) => {
-          setUpdate(!update);
-          updateAddress(e.target.value);
+          updateInputValue("address", e.target.value);
         }}
       />
 
@@ -81,8 +74,7 @@ const Details: React.FC<DetailsProps> = ({
         value={formData.abi}
         style={textInputStyle}
         onChange={(e) => {
-          setUpdate(!update);
-          updateAbi(e.target.value);
+          updateInputValue("abi", e.target.value);
         }}
       />
     </div>

@@ -23,7 +23,10 @@
     "**/*.ts",
     "**/*.tsx",
     "types/**/*.d.ts",
-    "pages/Sign.tsx"
-, "components/layout/Navbar.tsx"  ],
+    "pages/Sign.tsx",
+    "components/layout/Navbar.tsx",
+    "components/PaymasterItem.jsx",
+    "components/SismoProof.jsx"
+, "components/RelayDialog.tsx"  ],
   "exclude": ["node_modules"]
 }

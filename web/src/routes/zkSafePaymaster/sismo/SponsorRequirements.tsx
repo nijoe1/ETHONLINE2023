@@ -7,12 +7,12 @@ import SismoGroup from "./SismoGroup";
 import SismoSearch from "./SismoSearch";
 
 export default function UserRequirements({
-  nextStep,
+  updateInputValue,
   addGroup,
   groups,
   removeGroup,
 }: {
-  nextStep: any;
+  updateInputValue: (name: string, value: any) => void;
   addGroup: (id: string) => void;
   groups: any;
   removeGroup: (id: string) => void;
@@ -28,21 +28,6 @@ export default function UserRequirements({
         generationFrequency
         description
         name
-        snapshots {
-          size
-          dataUrl
-          timestamp
-        }
-        latestSnapshot {
-          dataUrl
-          id
-          size
-          timestamp
-          valueDistribution {
-            value
-            numberOfAccounts
-          }
-        }
       }
     }
     
@@ -96,7 +81,10 @@ export default function UserRequirements({
     };
   }, []);
 
-  useEffect(() => {}, [groups]);
+  useEffect(() => {
+    updateInputValue("groups",groups)
+  }, [groups]);
+
 
   const handleSelect = useCallback(
     (selected: any) => {

@@ -11,13 +11,6 @@ interface SearchBarProps {
 const SismoSearch: React.FC<SearchBarProps> = ({ loadOptions, onSelect }) => {
   return (
     <div>
-      <div>
-        <a>By adding sismo groups you require</a>
-        <br></br>
-        <a>from the user to submit their zkProof</a>
-        <br></br>
-        <a>to sponsor their transactions</a>
-      </div>
       <div className="flex flex-col items-center mt-5">
         <span className="font-bold mt-5 mx-2">Search sismo groups</span>
         <AsyncSelect

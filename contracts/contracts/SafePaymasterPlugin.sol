@@ -55,11 +55,11 @@ contract SafePaymasterPlugin is BasePluginWithEventMetadata, SismoConnect, Gelat
         SismoConnect(buildConfig(appId))
         BasePluginWithEventMetadata(
         PluginMetadata({
-            name: "Test Plugin",
+            name: "ZK-Safe-Paymaster",
             version: "1.0.0",
             requiresRootAccess: false,
             iconUrl: "",
-            appUrl: string.concat("https://nijoe1.github.io/Safe.Paymaster/#/relay/",Strings.toHexString(address(this)))
+            appUrl: string.concat("https://nijoe1.github.io/Safe.Paymaster/#/zkSafePaymaster/",Strings.toHexString(address(this)))
             })
         )
     {
@@ -70,12 +70,19 @@ contract SafePaymasterPlugin is BasePluginWithEventMetadata, SismoConnect, Gelat
         address safeAddress,
         address contractAddress,
         bytes4[] calldata  methods,
-        ClaimRequest[] calldata _claims,
+        bytes16[] calldata groupIDs,
         uint256 _timesPerAddress,
         string memory guardMetadataCID  
     )external{
+        bytes32 uid = keccak256(abi.encode(safeAddress,contractAddress));
+
+        GuardInfo storage SafeGuard = safeGuard[uid];
+
+        for(uint i = 0; i< groupIDs.length; i++){
+            SafeGuard.claims.push(buildClaim(groupIDs[i]));
+        }
         // To secure the Safe Multisig Wallet
-        if(!SafeOwners(safeAddress).isOwner(msg.sender)) revert NotPaymasterOwner();
+        // if(!SafeOwners(safeAddress).isOwner(msg.sender)) revert NotPaymasterOwner();
 
         if(safeWhitelistedContracts[safeAddress].length() == 0){
             indexer.AddPaymaster(safeAddress, guardMetadataCID);
@@ -85,10 +92,6 @@ contract SafePaymasterPlugin is BasePluginWithEventMetadata, SismoConnect, Gelat
 
         safeWhitelistedContracts[safeAddress].add(contractAddress);
 
-        bytes32 uid = keccak256(abi.encode(safeAddress,contractAddress));
-
-        GuardInfo storage SafeGuard = safeGuard[uid];
-
         // Adding the allowed methods
         for (uint i = 0; i < methods.length; ) {
             SafeGuard.contractAllowedMethods.add(methods[i]);
@@ -96,13 +99,7 @@ contract SafePaymasterPlugin is BasePluginWithEventMetadata, SismoConnect, Gelat
                 ++i;
             }
         }
-        // Adding the required ZK proofs to allow sponsoring the transaction
-        for (uint j = 0; j < _claims.length; ) {
-            SafeGuard.claims.push(_claims[j]);
-            unchecked {
-                ++j;
-            }
-        }
+ 
         SafeGuard.allowedTimesPerAddress = _timesPerAddress;
     }
 

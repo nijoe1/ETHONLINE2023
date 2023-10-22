@@ -19,16 +19,12 @@ import { ClaimRequest } from "@sismo-core/sismo-connect-react";
 
 const SAMPLE_PLUGIN_CHAIN_ID = 5;
 const SAMPLE_PLUGIN_ADDRESS = getAddress(
-  "0xF0Bb62526157a094Db0e8EdEbb61483e51100DfC"
+  pluginAbi.address
 );
 export const NATIVE_TOKEN = getAddress(
   "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
 );
-const SAMPLE_PLUGIN_ABI = [
-  "function setAllowedInteractions(address safeAddress, address contractAddress, bytes4[] calldata  methods, ClaimRequest[] calldata _claims, uint256 _timesPerAddress, string memory guardMetadataCID) external",
-  "function deleteAllowedInteractions(address safeAddress,address contractAddress,bytes4[] calldata  methods,string memory guardMetadataCID) external",
-  "function executeFromPlugin(address manager, address safe, SafeTransaction calldata safetx) external",
-];
+const SAMPLE_PLUGIN_ABI = pluginAbi.abi;
 const ECR20_ABI = [
   "function decimals() public view returns (uint256 decimals)",
   "function symbol() public view returns (string symbol)",
@@ -51,7 +47,7 @@ export const isKnownSamplePlugin = (
 
 const getRelayPlugin = async () => {
   const provider = await getProvider();
-  return new ethers.Contract(pluginAbi.address, pluginAbi.abi, provider);
+  return new ethers.Contract(SAMPLE_PLUGIN_ADDRESS, SAMPLE_PLUGIN_ABI, provider);
 };
 
 const getTest = async () => {
@@ -94,29 +90,23 @@ export const setAllowedInteractions = async (
   allowedTimesPerUser: number,
   metadataCID: string
 ) => {
+  const plugin = await getRelayPlugin();
+
   try {
-    const plugin = await getRelayPlugin();
-    let dt;
-    try {
-      dt = (
-        await plugin.setAllowedInteractions(
-          safeAddress,
-          contractAddress,
-          methods,
-          ClaimRequests,
-          allowedTimesPerUser,
-          metadataCID
-        )
-      ).data;
-      console.log(dt);
-    } catch (e) {
-      console.log(e);
-    }
     await submitTxs([
       {
-        to: pluginAbi.address,
+        to: await plugin.getAddress(),
         value: "0",
-        data: dt,
+        data: (
+          await plugin.setAllowedInteractions.populateTransaction(
+            getAddress(safeAddress),
+            getAddress(contractAddress),
+            methods,
+            ClaimRequests,
+            allowedTimesPerUser,
+            metadataCID
+          )
+        ).data,
       },
     ]);
   } catch (e) {
